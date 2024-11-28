@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "tree.h"
 
 static void linked_list_example(void)
 {
@@ -25,6 +26,18 @@ static void linked_list_example(void)
 
 static void binary_tree_example(void)
 {
+  binary_tree *tree = binary_tree_create();
+  binary_tree_insert(tree, 5);
+  binary_tree_insert(tree, 3);
+  binary_tree_insert(tree, 7);
+  binary_tree_insert(tree, 2);
+  binary_tree_insert(tree, 4);
+  binary_tree_insert(tree, 6);
+  binary_tree_insert(tree, 8);
+
+  binary_tree_print(tree);
+
+  binary_tree_destroy(tree);
 }
 
 int main(void)
