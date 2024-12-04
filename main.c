@@ -35,8 +35,19 @@ static void binary_tree_example(void)
   binary_tree_insert(tree, 6);
   binary_tree_insert(tree, 8);
 
-  binary_tree_print(tree);
+  binary_tree_zipper *zipper = binary_tree_zipper_create(tree);
 
+  binary_tree_zipper_print(zipper);
+  binary_tree_zipper_move_left(zipper);
+  binary_tree_zipper_print(zipper);
+
+  binary_tree_zipper_move_right(zipper);
+  binary_tree_zipper_print(zipper);
+
+  binary_tree_zipper_move_up(zipper);
+  binary_tree_zipper_print(zipper);
+
+  binary_tree_zipper_destroy(zipper);
   binary_tree_destroy(tree);
 }
 

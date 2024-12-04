@@ -98,3 +98,100 @@ void binary_tree_destroy(binary_tree *tree)
 
   free(tree);
 }
+
+static bool binary_tree_node_is_leaf(binary_tree_node *node)
+{
+  return node->left == NULL && node->right == NULL;
+}
+
+binary_tree_zipper *binary_tree_zipper_create(binary_tree *tree)
+{
+  binary_tree_zipper *zipper = malloc(sizeof(binary_tree_zipper));
+  zipper->focus = tree->root;
+  zipper->history = NULL;
+
+  return zipper;
+}
+
+void binary_tree_zipper_move_left(binary_tree_zipper *zipper)
+{
+  if (binary_tree_node_is_leaf(zipper->focus))
+  {
+    return;
+  }
+
+  binary_tree_zipper_history_node *history_node = malloc(sizeof(binary_tree_zipper_history_node));
+  history_node->node_with_direction = malloc(sizeof(binary_tree_node_with_direction));
+  history_node->node_with_direction->node = zipper->focus;
+  history_node->node_with_direction->is_left = true;
+  history_node->next = zipper->history;
+
+  zipper->history = history_node;
+  zipper->focus = zipper->focus->left;
+}
+
+void binary_tree_zipper_move_right(binary_tree_zipper *zipper)
+{
+  if (binary_tree_node_is_leaf(zipper->focus))
+  {
+    return;
+  }
+
+  binary_tree_zipper_history_node *history_node = malloc(sizeof(binary_tree_zipper_history_node));
+  history_node->node_with_direction = malloc(sizeof(binary_tree_node_with_direction));
+  history_node->node_with_direction->node = zipper->focus;
+  history_node->node_with_direction->is_left = false;
+  history_node->next = zipper->history;
+
+  zipper->history = history_node;
+  zipper->focus = zipper->focus->right;
+}
+
+void binary_tree_zipper_move_up(binary_tree_zipper *zipper)
+{
+  if (zipper->history == NULL)
+  {
+    return;
+  }
+
+  binary_tree_zipper_history_node *history_node = zipper->history;
+  zipper->focus = history_node->node_with_direction->node;
+  zipper->history = history_node->next;
+  free(history_node->node_with_direction);
+  free(history_node);
+}
+
+void binary_tree_zipper_print(binary_tree_zipper *zipper)
+{
+  binary_tree_node *node = zipper->focus;
+  printf("%d\n", node->data);
+
+  binary_tree_zipper_history_node *history_node = zipper->history;
+  while (history_node != NULL)
+  {
+    binary_tree_node_with_direction *node_with_direction = history_node->node_with_direction;
+    printf("%d\n", node_with_direction->node->data);
+    history_node = history_node->next;
+  }
+
+  printf("\n");
+}
+
+void binary_tree_zipper_destroy(binary_tree_zipper *zipper)
+{
+  if (zipper->history != NULL)
+  {
+    binary_tree_zipper_history_node *history_node = zipper->history;
+    binary_tree_zipper_history_node *next = NULL;
+
+    while (history_node != NULL)
+    {
+      next = history_node->next;
+      free(history_node->node_with_direction);
+      free(history_node);
+      history_node = next;
+    }
+  }
+
+  free(zipper);
+}
